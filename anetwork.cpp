@@ -7,13 +7,30 @@ ANetwork::ANetwork(double learning_rate, uint batch_size) : m_learning_rate(lear
 
 }
 
-void ANetwork::fit(std::vector<AFeatures> &samples, std::vector<uint> y)
+void ANetwork::fit(QVector<AFeatures> &samples_train, QVector<uint> y_train,
+                   QVector<AFeatures> &samples_test,  QVector<uint> y_test)
 {
   m_batch_losses = {};
 
-  for (ulong i = 0; i < samples.size(); ++i)
+  for (long long i = 0; i < samples_train.size(); ++i)
     {
-      train_step(samples[i],y[i]);
+//      train_step(samples[i],y[i]);
+      uint z = 0;//i % m_batch_size;
+
+      double loss {0};
+      for (z = i; z < i + m_batch_size; ++z)
+        {
+          loss = train_step(samples_train[z],y_train[z]);
+        }
+      if (i % 100 == 0)
+        m_curr_accuracy = calk_accuracy(samples_test,y_test);
+      //NOTE для отладки
+      cout << setw(10) << left
+           << "num step=" << setw(10) << left << i
+           << "  loss=" << setw(10) << left << loss
+           << "  mean_loss=" << setw(10) << left << mean_loss()
+           << "  accuracy=" << setw(10) << left << m_curr_accuracy
+           << endl;
     }
 }
 
@@ -29,9 +46,9 @@ AAnswer ANetwork::predict(AFeatures X)
   forward();
 
   // результирующий класс определяем как класс с наибольшей вероятностью
-  vector<double *> acsons = m_layers.back()->acsons(); //TODO возможно следует вероятности подвергнуть softmax
+  QVector<double *> acsons = m_layers.back()->acsons(); //TODO возможно следует вероятности подвергнуть softmax
   double max_chance = 0;
-  for (ulong i = 0; i < acsons.size(); ++i)
+  for (long long i = 0; i < acsons.size(); ++i)
     {
       result.chances.push_back(*acsons[i]);
       if (*acsons[i] > max_chance)
@@ -43,7 +60,7 @@ AAnswer ANetwork::predict(AFeatures X)
   return result;
 }
 
-void ANetwork::addLayer(std::unique_ptr<ALayer> layer)
+void ANetwork::addLayer(const std::shared_ptr<ALayer> &layer)
 {
   if(!m_layers.empty())
     {
@@ -53,7 +70,7 @@ void ANetwork::addLayer(std::unique_ptr<ALayer> layer)
   layer->setLearning_rate(m_learning_rate);
 
   // добавляем слой
-  m_layers.push_back(std::move(layer));
+  m_layers.push_back(layer);
 }
 
 double ANetwork::mean_loss()
@@ -66,22 +83,21 @@ double ANetwork::train_step(AFeatures &X, uint y)
 {
   // указываем признаки
   static uint num_step = 0;
-//  if (num_step == 0)
   m_layers.front()->set_features(X);
 
   forward();
 
   // рассчитываем функцию потерь как softmax от логитов
-  vector<double> logits = m_layers.back()->logits();
+  QVector<double> logits = m_layers.back()->logits();
   double loss = calk_loss(logits,y);
   add_to_mean_batch_loss(loss);
 
   // рассчитываем производную от функции потерь
-  vector<double> d_loss = calk_d_loss(logits,y);
+  QVector<double> d_loss = calk_d_loss(logits,y);
 
   // устанавливаем полученные значения производных для каждого нейрона последнего слоя
-  vector<double *> d_y = m_layers.back()->dy();
-  for (ulong i = 0; i < d_loss.size(); ++i)
+  QVector<double *> d_y = m_layers.back()->dy();
+  for (long long i = 0; i < d_loss.size(); ++i)
     {
       *d_y[i] = d_loss[i];
     }
@@ -89,7 +105,13 @@ double ANetwork::train_step(AFeatures &X, uint y)
 
   //NOTE для отладки
 //  static uint num_step = 0;
-  cout << "num step=" << num_step << "   loss=" << loss << "   mean_loss=" << mean_loss() << endl;
+//  cout << setw(10) << left
+//       << "num step=" << setw(10) << left << num_step
+//       << "loss=" << setw(10) << left << loss
+//       << "mean_loss=" << setw(10) << left << mean_loss()
+//       << "accuracy=" << setw(10) << left << m_curr_accuracy
+//       << endl;
+
   num_step++;
 
   return loss;
@@ -98,7 +120,7 @@ double ANetwork::train_step(AFeatures &X, uint y)
 void ANetwork::forward()
 {
   // запускаем работу всех нейронов
-  for (ulong i = 0; i < m_layers.size(); ++i)
+  for (long long i = 0; i < m_layers.size(); ++i)
     {
       m_layers[i]->forward();
     }
@@ -123,7 +145,7 @@ void ANetwork::add_to_mean_batch_loss(double loss)
     }
 }
 
-double ANetwork::calk_loss(std::vector<double> logits, uint y)
+double ANetwork::calk_loss(QVector<double> logits, uint y)
 {
   long double sum_logits = 0;
   for (double logit : logits)
@@ -133,9 +155,9 @@ double ANetwork::calk_loss(std::vector<double> logits, uint y)
   return log(sum_logits) - logits[y];
 }
 
-std::vector<double> ANetwork::calk_d_loss(std::vector<double> logits, uint y)
+QVector<double> ANetwork::calk_d_loss(QVector<double> logits, uint y)
 {
-  std::vector<double> soft_max;
+  QVector<double> soft_max;
   long double sum_exp_logits = 0;
   for (auto logit : logits)
     {
@@ -147,4 +169,15 @@ std::vector<double> ANetwork::calk_d_loss(std::vector<double> logits, uint y)
     }
   soft_max[y] = soft_max[y] - 1;
   return soft_max;
+}
+
+double ANetwork::calk_accuracy(QVector<AFeatures> &samples, QVector<uint> y)
+{
+  double true_count = 0;
+  for (auto i = 0; i < samples.size(); ++i)
+    {
+      uint predicted_y = predict(samples[i]).class_num;
+      true_count += predicted_y == y[i];
+    }
+  return true_count / double(samples.size());
 }

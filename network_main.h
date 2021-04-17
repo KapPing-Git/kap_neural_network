@@ -1,15 +1,17 @@
 #ifndef NETWORK_MAIN_H
 #define NETWORK_MAIN_H
 
-#include<vector>
+//#include<vector>
+#include<QVector>
 
 using uint = unsigned int;
-using AFeatures = std::vector<double>;
+using AFeatures = QVector<double>;
 
 struct ADataset
 {
-  std::vector<AFeatures> features;
-  std::vector<uint> num_class;
+  QVector<AFeatures> features;
+  QVector<uint> num_class;
 };
+
 
 #endif // NETWORK_MAIN_H

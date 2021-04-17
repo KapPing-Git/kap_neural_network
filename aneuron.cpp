@@ -3,25 +3,27 @@
 using namespace std;
 using namespace std::chrono;
 
-ANeuron::ANeuron(AAbstructActivationFunction &activationFunction, std::vector<double *> dendrits, std::vector<double*> dx)
-  : m_activationFunction(activationFunction), m_x(dendrits), m_dx(dx)
+ANeuron::ANeuron(AAbstructActivationFunction &activationFunction, const QVector<double *> &dendrits, const QVector<double *> &dx)
+  : m_activationFunction{&activationFunction}, m_x{dendrits}, m_dx{dx}
 {
   create_random_weights();
 }
 
-void ANeuron::set_dendrits(std::vector<double *> dendrits, std::vector<double *> dX)
+void ANeuron::set_dendrits(QVector<double *> dendrits, QVector<double *> dX)
 {
   m_x = dendrits;
   m_dx = dX;
   m_fx = {}; // если это не первый слой то используются m_x
-  create_random_weights();
+  if (m_w.isEmpty())
+    create_random_weights();
 }
 
 void ANeuron::set_features(AFeatures &features)
 {
   m_fx = features;
   m_x = {}; // если это первый слой то используются m_fx
-  create_random_weights();
+  if (m_w.isEmpty())
+    create_random_weights();
 }
 
 void ANeuron::forward()
@@ -30,52 +32,54 @@ void ANeuron::forward()
   // если это нейрон первого слоя
   if (!m_fx.empty())
     {
-      for (ulong i = 0; i < m_fx.size(); ++i)
+      for (long long i = 0; i < m_fx.size(); ++i)
         {
           m_logit += m_fx[i] * m_w[i];
         }
     }
   else if (!m_x.empty())
     {
-      for (ulong i = 0; i < m_x.size(); ++i)
+      for (long long i = 0; i < m_x.size(); ++i)
         {
           m_logit += *m_x[i] * m_w[i];
         }
     }
 
   m_logit += m_b;
-  m_y = m_activationFunction.forward(m_logit);
+  m_y = m_activationFunction->forward(m_logit);
   m_dy = 0;
 }
 
 void ANeuron::backward()
 {
-  double dy = m_dy * m_activationFunction.backward(m_logit) * m_learning_rate;
-  m_b -= dy;
-  // если это нейрон первого слоя
-  if (!m_fx.empty())
-    {
-      for (ulong i = 0; i < m_x.size(); ++i)
-        {
-          m_w[i] -= m_fx[i] * dy;
-        }
-    }
-  else if (!m_x.empty())
-    {
-      for (ulong i = 0; i < m_x.size(); ++i)
-        {
-          m_w[i] -= *m_x[i] * dy;
-        }
-    }
+  double dy = m_dy * m_activationFunction->backward(m_logit);
+  double lr_dy = dy  * m_learning_rate;
+  m_b -= lr_dy;
+
   // если это нейрон первого слоя то m_dx не существует
   if (!m_dx.empty())
     {
-      for (ulong i = 0; i < m_x.size(); ++i)
+      for (long long i = 0; i < m_x.size(); ++i)
         {
           *m_dx[i] += m_w[i] * dy;
         }
     }
 
+  // если это нейрон первого слоя
+  if (!m_fx.empty())
+    {
+      for (long long i = 0; i < m_fx.size(); ++i)
+        {
+          m_w[i] -= m_fx[i] * lr_dy;
+        }
+    }
+  else if (!m_x.empty())
+    {
+      for (long long i = 0; i < m_x.size(); ++i)
+        {
+          m_w[i] -= *m_x[i] * lr_dy;
+        }
+    }
 }
 
 void ANeuron::setLearning_rate(double learning_rate)

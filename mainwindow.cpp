@@ -8,13 +8,14 @@ MainWindow::MainWindow(QWidget *parent)
   , ui(new Ui::MainWindow)
 {
   ui->setupUi(this);
-  m_network.reset(new ANetwork(2,40));
-  m_network->addLayer(unique_ptr<ALayer>(new ALayer(100,m_ReLU)));
-  m_network->addLayer(unique_ptr<ALayer>(new ALayer(200,m_ReLU)));
-  m_network->addLayer(unique_ptr<ALayer>(new ALayer(10,m_ReLU)));
+  m_network.reset(new ANetwork(0.01,100));
+  m_network->addLayer(shared_ptr<ALayer>(new ALayer(100,m_ReLU)));
+  m_network->addLayer(shared_ptr<ALayer>(new ALayer(200,m_ReLU)));
+  m_network->addLayer(shared_ptr<ALayer>(new ALayer(10,m_none)));
 
  ADataset train = read_mnist_from_csv("/home/kap/source_code/II/mnist/mnist_train.csv");
- m_network->fit(train.features,train.num_class);
+ ADataset test = read_mnist_from_csv("/home/kap/source_code/II/mnist/mnist_test.csv");
+ m_network->fit(train.features,train.num_class,test.features,test.num_class);
 
 }
 

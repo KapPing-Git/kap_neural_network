@@ -1,7 +1,7 @@
 #include "alayer.h"
 
-ALayer::ALayer(ulong neuron_counts, AAbstructActivationFunction &activationFunction, std::vector<double*> dendrits,
-               std::vector<double*> dx)
+ALayer::ALayer(ulong neuron_counts, AAbstructActivationFunction &activationFunction, QVector<double*> dendrits,
+               QVector<double*> dx)
 {
   for (ulong i = 0; i < neuron_counts; ++i)
     {
@@ -9,11 +9,11 @@ ALayer::ALayer(ulong neuron_counts, AAbstructActivationFunction &activationFunct
     }
 }
 
-std::vector<double *> ALayer::acsons()
+QVector<double *> ALayer::acsons()
 {
-  std::vector<double *> result;
+  QVector<double *> result;
   result.reserve(m_neurons.size());
-  for (ulong i = 0; i < m_neurons.size(); ++i)
+  for ( long long i = 0; i < m_neurons.size(); ++i)
     {
       result.push_back(&m_neurons[i].m_y);
 //      result[i] = &m_neurons[i].m_y;
@@ -21,11 +21,11 @@ std::vector<double *> ALayer::acsons()
   return result;
 }
 
-std::vector<double> ALayer::logits()
+QVector<double> ALayer::logits()
 {
-  std::vector<double> result;
+  QVector<double> result;
   result.reserve(m_neurons.size());
-  for (ulong i = 0; i < m_neurons.size(); ++i)
+  for (long long i = 0; i < m_neurons.size(); ++i)
     {
       result.push_back(m_neurons[i].m_logit);
 //      result[i] = m_neurons[i].m_logit;
@@ -33,11 +33,11 @@ std::vector<double> ALayer::logits()
   return result;
 }
 
-std::vector<double *> ALayer::dy()
+QVector<double *> ALayer::dy()
 {
-  std::vector<double *> result;
+  QVector<double *> result;
   result.reserve(m_neurons.size());
-  for (ulong i = 0; i < m_neurons.size(); ++i)
+  for (long long i = 0; i < m_neurons.size(); ++i)
     {
       result.push_back(&m_neurons[i].m_dy);
 //      result[i] = &m_neurons[i].m_dy;
@@ -46,9 +46,9 @@ std::vector<double *> ALayer::dy()
 }
 
 // создаём полносвязный слой
-void ALayer::setPreviosLayerAcsons(std::vector<double *> acsons, std::vector<double *> dX)
+void ALayer::setPreviosLayerAcsons(QVector<double *> acsons, QVector<double *> dX)
 {
-  for (ulong i = 0; i < m_neurons.size(); ++i)
+  for (long long i = 0; i < m_neurons.size(); ++i)
     {
       m_neurons[i].set_dendrits(acsons,dX);
     }
@@ -56,7 +56,7 @@ void ALayer::setPreviosLayerAcsons(std::vector<double *> acsons, std::vector<dou
 
 void ALayer::set_features(AFeatures &features)
 {
-  for (ulong i = 0; i < m_neurons.size(); ++i)
+  for (long long i = 0; i < m_neurons.size(); ++i)
     {
       m_neurons[i].set_features(features);
     }
@@ -64,7 +64,7 @@ void ALayer::set_features(AFeatures &features)
 
 void ALayer::forward()
 {
-  for (ulong i = 0; i < m_neurons.size(); ++i)
+  for (long long i = 0; i < m_neurons.size(); ++i)
     {
       m_neurons[i].forward();
     }
@@ -72,7 +72,7 @@ void ALayer::forward()
 
 void ALayer::backward()
 {
-  for (ulong i = 0; i < m_neurons.size(); ++i)
+  for (long long i = 0; i < m_neurons.size(); ++i)
     {
       m_neurons[i].backward();
     }
@@ -80,7 +80,7 @@ void ALayer::backward()
 
 void ALayer::setLearning_rate(double learning_rate)
 {
-  for (ulong i = 0; i < m_neurons.size(); ++i)
+  for (long long i = 0; i < m_neurons.size(); ++i)
     {
       m_neurons[i].setLearning_rate(learning_rate);
     }

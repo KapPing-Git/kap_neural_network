@@ -30,6 +30,7 @@ private:
   Ui::MainWindow *ui;
   std::shared_ptr<ANetwork> m_network;
   A_ReLU_function m_ReLU;
+  A_none_function m_none;
 
   ADataset read_mnist_from_csv(std::string file_name);
 
