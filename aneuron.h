@@ -19,7 +19,7 @@ public:
   double m_dy {0};
   double m_logit {0};
   void set_dendrits(QVector<double*> dendrits, QVector<double *> dX = {});
-  void set_features(AFeatures &features);
+  void set_features(const AFeatures &features);
   void forward();
   void backward();
   void setLearning_rate(double learning_rate);

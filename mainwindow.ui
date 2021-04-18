@@ -6,35 +6,107 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>232</width>
-    <height>87</height>
+    <width>1148</width>
+    <height>573</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Нейросеть 0.0.1</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>Старт</string>
-      </property>
-     </widget>
+     <widget class="QTextEdit" name="statistic_edit"/>
     </item>
     <item>
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>loss:</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="loss_label">
-      <property name="text">
-       <string>XXXX</string>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>файл train</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="train_edit">
+          <property name="text">
+           <string>/home/kap/source_code/II/mnist/mnist_train.csv</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QPushButton" name="train_review_button">
+          <property name="text">
+           <string>Обзор</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>файл test</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="test_edit">
+          <property name="text">
+           <string>/home/kap/source_code/II/mnist/mnist_test.csv</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QPushButton" name="test_review_button">
+          <property name="text">
+           <string>Обзор</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLineEdit" name="targetEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>0.97</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>достигнуть точность</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="start_button">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Старт</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -43,7 +115,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>232</width>
+     <width>1148</width>
      <height>22</height>
     </rect>
    </property>

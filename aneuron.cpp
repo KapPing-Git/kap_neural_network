@@ -18,7 +18,7 @@ void ANeuron::set_dendrits(QVector<double *> dendrits, QVector<double *> dX)
     create_random_weights();
 }
 
-void ANeuron::set_features(AFeatures &features)
+void ANeuron::set_features(const AFeatures &features)
 {
   m_fx = features;
   m_x = {}; // если это первый слой то используются m_fx

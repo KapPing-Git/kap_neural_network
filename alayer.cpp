@@ -54,7 +54,7 @@ void ALayer::setPreviosLayerAcsons(QVector<double *> acsons, QVector<double *> d
     }
 }
 
-void ALayer::set_features(AFeatures &features)
+void ALayer::set_features(const AFeatures &features)
 {
   for (long long i = 0; i < m_neurons.size(); ++i)
     {
