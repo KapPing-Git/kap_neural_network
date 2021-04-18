@@ -17,7 +17,7 @@ public:
   QVector<double> logits();
   QVector<double *> dy();
   void setPreviosLayerAcsons(QVector<double*> acsons, QVector<double*> dX = {});
-  void set_features(AFeatures &features);
+  void set_features(const AFeatures &features);
   void forward();
   void backward();
   void setLearning_rate(double learning_rate);
