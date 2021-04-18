@@ -10,27 +10,33 @@ ANetwork::ANetwork(double learning_rate, uint batch_size) : m_learning_rate(lear
 void ANetwork::fit(QVector<AFeatures> &samples_train, QVector<uint> y_train,
                    QVector<AFeatures> &samples_test,  QVector<uint> y_test)
 {
-  m_batch_losses = {};
-
-  for (long long i = 0; i < samples_train.size(); ++i)
+  const uint mini_loss_size = 10000.0;
+  double sum_loss {0};
+  double sum_loss_mini {0};
+  while(m_curr_accuracy < 97.7)
     {
-//      train_step(samples[i],y[i]);
-      uint z = 0;//i % m_batch_size;
-
+      static uint i = 0;
       double loss {0};
-      for (z = i; z < i + m_batch_size; ++z)
+      for (long long i = 0; i < samples_train.size(); ++i)
         {
-          loss = train_step(samples_train[z],y_train[z]);
+          loss = train_step(samples_train[i],y_train[i]);
+          sum_loss_mini += loss;
+          sum_loss += loss;
+          if (i % mini_loss_size == 0)
+            {
+              cout << sum_loss_mini / double(mini_loss_size) << endl;
+              sum_loss_mini = 0;
+            }
         }
-      if (i % 100 == 0)
-        m_curr_accuracy = calk_accuracy(samples_test,y_test);
+      m_curr_accuracy = calk_accuracy(samples_test,y_test);
       //NOTE для отладки
       cout << setw(10) << left
-           << "num step=" << setw(10) << left << i
-           << "  loss=" << setw(10) << left << loss
-           << "  mean_loss=" << setw(10) << left << mean_loss()
-           << "  accuracy=" << setw(10) << left << m_curr_accuracy
+           << "num step=" << setw(15) << left << i
+           << "  mean_loss=" << setw(15) << left << sum_loss / samples_train.size()
+           << "  accuracy=" << setw(15) << left << m_curr_accuracy
            << endl;
+      sum_loss = 0;
+      ++i;
     }
 }
 
@@ -73,16 +79,15 @@ void ANetwork::addLayer(const std::shared_ptr<ALayer> &layer)
   m_layers.push_back(layer);
 }
 
-double ANetwork::mean_loss()
-{
-  return m_sum_batch_loss / m_batch_losses.size();
-}
+//double ANetwork::mean_loss()
+//{
+//  return m_sum_batch_loss / m_batch_losses.size();
+//}
 
 // шаг обучения возвращает значение функции потерь на данном шаге, так же формирует его среднее значение за batch_size
 double ANetwork::train_step(AFeatures &X, uint y)
 {
   // указываем признаки
-  static uint num_step = 0;
   m_layers.front()->set_features(X);
 
   forward();
@@ -90,7 +95,7 @@ double ANetwork::train_step(AFeatures &X, uint y)
   // рассчитываем функцию потерь как softmax от логитов
   QVector<double> logits = m_layers.back()->logits();
   double loss = calk_loss(logits,y);
-  add_to_mean_batch_loss(loss);
+  //  add_to_mean_batch_loss(loss);
 
   // рассчитываем производную от функции потерь
   QVector<double> d_loss = calk_d_loss(logits,y);
@@ -102,17 +107,6 @@ double ANetwork::train_step(AFeatures &X, uint y)
       *d_y[i] = d_loss[i];
     }
   backward();
-
-  //NOTE для отладки
-//  static uint num_step = 0;
-//  cout << setw(10) << left
-//       << "num step=" << setw(10) << left << num_step
-//       << "loss=" << setw(10) << left << loss
-//       << "mean_loss=" << setw(10) << left << mean_loss()
-//       << "accuracy=" << setw(10) << left << m_curr_accuracy
-//       << endl;
-
-  num_step++;
 
   return loss;
 }
@@ -134,16 +128,16 @@ void ANetwork::backward()
     }
 }
 
-void ANetwork::add_to_mean_batch_loss(double loss)
-{
-  m_batch_losses.push(loss);
-  m_sum_batch_loss += loss;
-  if (m_batch_losses.size() > m_batch_size)
-    {
-      m_sum_batch_loss -= m_batch_losses.front();
-      m_batch_losses.pop();
-    }
-}
+//void ANetwork::add_to_mean_batch_loss(double loss)
+//{
+//  m_batch_losses.push(loss);
+//  m_sum_batch_loss += loss;
+//  if (m_batch_losses.size() > m_batch_size)
+//    {
+//      m_sum_batch_loss -= m_batch_losses.front();
+//      m_batch_losses.pop();
+//    }
+//}
 
 double ANetwork::calk_loss(QVector<double> logits, uint y)
 {

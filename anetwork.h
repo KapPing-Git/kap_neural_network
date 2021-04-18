@@ -24,20 +24,20 @@ public:
            QVector<AFeatures> &samples_test,  QVector<uint> y_test);
   AAnswer predict(AFeatures X);
   void addLayer(const std::shared_ptr<ALayer> &layer);
-  double mean_loss();
+//  double mean_loss();
 
 private:
   QVector<std::shared_ptr<ALayer>> m_layers;
   double m_learning_rate;
   uint m_batch_size;
   double m_sum_batch_loss {0};
-  std::queue<double> m_batch_losses;
+//  std::queue<double> m_batch_losses;
   double m_curr_accuracy {0};
 
   double train_step(AFeatures &X, uint y);
   void forward();
   void backward();
-  void add_to_mean_batch_loss(double loss);
+//  void add_to_mean_batch_loss(double loss);
   double calk_loss(QVector<double> logits, uint y);
   QVector<double> calk_d_loss(QVector<double> logits, uint y);
   double calk_accuracy(QVector<AFeatures> &samples, QVector<uint> y);
