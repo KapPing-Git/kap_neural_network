@@ -5,6 +5,7 @@
 #include <random>
 #include <chrono>
 #include <QVector>
+#include <QDataStream>
 
 #include "network_main.h"
 #include "aactivationfunction.h"
@@ -32,8 +33,6 @@ private:
   QVector<double*> m_dx;
   QVector<double> m_w;
   double m_b {0};
-
-
   void create_random_weights();
 };
 

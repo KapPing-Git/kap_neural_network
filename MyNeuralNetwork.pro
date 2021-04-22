@@ -11,6 +11,7 @@ CONFIG += c++11
 SOURCES += \
     aactivationfunction.cpp \
     alayer.cpp \
+    amnist_picture_creator.cpp \
     anetwork.cpp \
     aneuron.cpp \
     main.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
 HEADERS += \
     aactivationfunction.h \
     alayer.h \
+    amnist_picture_creator.h \
     anetwork.h \
     aneuron.h \
     mainwindow.h \

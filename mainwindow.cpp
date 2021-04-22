@@ -71,3 +71,14 @@ void MainWindow::on_network_requested(ATrain_step_statistic statistic)
   ui->statistic_edit->append(QString::fromStdString(statistic.descriptions));
   QApplication::processEvents();
 }
+
+void MainWindow::on_predictButton_clicked()
+{
+  AFeatures features = ui->pic_widget->pic_as_features();
+  ui->predictedEdit->setText(QString::number(m_network->predict(features).class_num));
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+  ui->pic_widget->clear();
+}

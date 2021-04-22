@@ -16,6 +16,8 @@
 #include "aneuron.h"
 #include "network_main.h"
 
+#include "amnist_picture_creator.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -32,6 +34,10 @@ private slots:
   void on_train_review_button_clicked();
   void on_test_review_button_clicked();
   void on_start_button_clicked();
+
+  void on_predictButton_clicked();
+
+  void on_pushButton_clicked();
 
 private:
   Ui::MainWindow *ui;
