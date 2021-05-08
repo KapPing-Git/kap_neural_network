@@ -21,9 +21,14 @@ public:
   void forward();
   void backward();
   void setLearning_rate(double learning_rate);
+  friend QDataStream &operator<<(QDataStream &stream, const ALayer &layer);
+  friend QDataStream &operator>>(QDataStream &stream, ALayer &layer);
 
 private:
   QVector<ANeuron> m_neurons;
 };
+
+QDataStream &operator<<(QDataStream &stream, const ALayer &layer);
+QDataStream &operator>>(QDataStream &stream, ALayer &layer);
 
 #endif // ALAYER_H

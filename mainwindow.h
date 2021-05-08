@@ -9,6 +9,7 @@
 
 #include <QMainWindow>
 #include <QFileDialog>
+#include <QFile>
 
 #include "anetwork.h"
 #include "alayer.h"
@@ -38,6 +39,10 @@ private slots:
   void on_predictButton_clicked();
 
   void on_pushButton_clicked();
+
+  void on_saveButton_clicked();
+
+  void on_loadButton_clicked();
 
 private:
   Ui::MainWindow *ui;

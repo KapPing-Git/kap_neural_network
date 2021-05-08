@@ -36,7 +36,7 @@ void ANetwork::fit(QVector<AFeatures> &samples_train, QVector<uint> y_train,
         }
       m_curr_accuracy = calk_accuracy(samples_test,y_test);
 
-
+#ifndef Q_OS_ANDROID
       ostringstream val_stream;
 
       //формируем строку статистики
@@ -45,7 +45,7 @@ void ANetwork::fit(QVector<AFeatures> &samples_train, QVector<uint> y_train,
            << "  mean_loss=" << setw(15) << left << sum_loss / samples_train.size()
            << "  accuracy=" << setw(15) << left << m_curr_accuracy;
       statistic.descriptions = val_stream.str();
-
+#endif
       //отправляем статистику получателю
       if (m_train_statistic_resiever)
         m_train_statistic_resiever(statistic);
@@ -177,4 +177,31 @@ double ANetwork::calk_accuracy(QVector<AFeatures> &samples, QVector<uint> y)
       true_count += predicted_y == y[i];
     }
   return true_count / double(samples.size());
+}
+
+
+QDataStream &operator<<(QDataStream &stream, const ANetwork &network)
+{
+  stream << network.m_learning_rate << network.m_layers.size();
+  for (const auto &layer: network.m_layers)
+    {
+      stream << *layer.get();
+    }
+  return stream;
+}
+
+QDataStream &operator>>(QDataStream &stream, ANetwork &network)
+{
+//  // удаляем старые слои
+//  network.m_layers.clear();
+
+  // создаём новые
+  QVector<std::shared_ptr<ALayer>>::size_type layers_count {0};
+  stream >> network.m_learning_rate >> layers_count;
+  for (auto &layer: network.m_layers)
+      {
+        stream >> *layer.get();
+      }
+
+  return stream;
 }

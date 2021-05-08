@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/wieghts"/>
+    <qresource prefix="/">
+        <file>network_data.net</file>
+    </qresource>
+</RCC>

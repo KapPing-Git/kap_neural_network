@@ -30,6 +30,8 @@ public:
   AAnswer predict(AFeatures X);
   void addLayer(const std::shared_ptr<ALayer> &layer);
   void set_statistic_resiever(std::function<void(ATrain_step_statistic)> train_statistic_resiever);
+  friend QDataStream &operator<<(QDataStream &stream, const ANetwork &network);
+  friend QDataStream &operator>>(QDataStream &stream, ANetwork &network);
 
 private:
   QVector<std::shared_ptr<ALayer>> m_layers;
@@ -46,5 +48,8 @@ private:
   QVector<double> calk_d_loss(QVector<double> logits, uint y);
   double calk_accuracy(QVector<AFeatures> &samples, QVector<uint> y);
 };
+
+QDataStream &operator<<(QDataStream &stream, const ANetwork &network);
+QDataStream &operator>>(QDataStream &stream, ANetwork &network);
 
 #endif // ANETWORK_H

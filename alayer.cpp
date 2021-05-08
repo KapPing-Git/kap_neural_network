@@ -85,3 +85,20 @@ void ALayer::setLearning_rate(double learning_rate)
       m_neurons[i].setLearning_rate(learning_rate);
     }
 }
+
+
+QDataStream &operator<<(QDataStream &stream, const ALayer &layer)
+{
+  for(auto &neuron : layer.m_neurons)
+    stream << neuron;
+//  stream << layer.m_neurons;
+  return stream;
+}
+
+QDataStream &operator>>(QDataStream &stream, ALayer &layer)
+{
+  for(auto &neuron : layer.m_neurons)
+    stream >> neuron;
+//  stream >> layer.m_neurons;
+  return stream;
+}

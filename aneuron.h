@@ -24,6 +24,8 @@ public:
   void forward();
   void backward();
   void setLearning_rate(double learning_rate);
+  friend QDataStream &operator<<(QDataStream &stream, const ANeuron &neuron);
+  friend QDataStream &operator>>(QDataStream &stream, ANeuron &neuron);
 
 private:
   AAbstructActivationFunction *m_activationFunction;
@@ -35,5 +37,8 @@ private:
   double m_b {0};
   void create_random_weights();
 };
+
+QDataStream &operator<<(QDataStream &stream, const ANeuron &neuron);
+QDataStream &operator>>(QDataStream &stream, ANeuron &neuron);
 
 #endif // ANEURON_H

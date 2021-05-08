@@ -22,6 +22,7 @@ private:
   static const int PIC_HEIGHT = 28;
   uint8_t m_picture[PIC_WIDTH][PIC_HEIGHT];
 
+  void reduce(uint x, uint y,uint value);
 
   // QWidget interface
 protected:

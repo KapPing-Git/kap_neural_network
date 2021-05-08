@@ -36,3 +36,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
     LICENSE.txt
+
+RESOURCES += \
+    res.qrc

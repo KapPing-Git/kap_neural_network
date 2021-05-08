@@ -100,3 +100,16 @@ void ANeuron::create_random_weights()
   for(ulong i = 0; i < size; ++i)
     m_w.push_back(rd(dre));
 }
+
+
+QDataStream &operator<<(QDataStream &stream, const ANeuron &neuron)
+{
+  stream << neuron.m_w;
+  return stream;
+}
+
+QDataStream &operator>>(QDataStream &stream, ANeuron &neuron)
+{
+  stream >> neuron.m_w;
+  return stream;
+}

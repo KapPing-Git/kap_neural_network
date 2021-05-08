@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
   , ui(new Ui::MainWindow)
 {
   ui->setupUi(this);
-  m_network.reset(new ANetwork(0.015,100));
+  m_network.reset(new ANetwork(0.005,100));
   m_network->addLayer(shared_ptr<ALayer>(new ALayer(100,m_ReLU)));
   m_network->addLayer(shared_ptr<ALayer>(new ALayer(200,m_ReLU)));
   m_network->addLayer(shared_ptr<ALayer>(new ALayer(10,m_none)));
@@ -35,6 +35,7 @@ ADataset MainWindow::read_mnist_from_csv(string file_name)
       istringstream val_stream(str);
       string val;
       getline(val_stream,val,',');
+
       result.num_class.push_back(stoi(val));
       AFeatures features;
       while(!val_stream.eof())
@@ -62,7 +63,7 @@ void MainWindow::on_test_review_button_clicked()
 void MainWindow::on_start_button_clicked()
 {
    m_train = read_mnist_from_csv(ui->train_edit->text().toStdString());
-   m_test = read_mnist_from_csv(ui->train_edit->text().toStdString());
+   m_test = read_mnist_from_csv(ui->test_edit->text().toStdString());
    m_network->fit(m_train.features,m_train.num_class,m_test.features,m_test.num_class,ui->targetEdit->text().toDouble());
 }
 
@@ -81,4 +82,32 @@ void MainWindow::on_predictButton_clicked()
 void MainWindow::on_pushButton_clicked()
 {
   ui->pic_widget->clear();
+}
+
+void MainWindow::on_saveButton_clicked()
+{
+#ifdef Q_OS_ANDROID
+  QFile file(":/network_data.net");
+#else
+  QFile file("network_data.net");
+#endif
+  if (file.open(QIODevice::WriteOnly))
+    {
+      QDataStream stream(&file);
+      stream << *m_network.get();
+    }
+}
+
+void MainWindow::on_loadButton_clicked()
+{
+  #ifdef Q_OS_ANDROID
+  QFile file(":/network_data.net");
+  #else
+  QFile file("network_data.net");
+  #endif
+  if (file.open(QIODevice::ReadOnly))
+    {
+      QDataStream stream(&file);
+      stream >> *m_network.get();
+    }
 }

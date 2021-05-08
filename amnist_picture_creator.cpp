@@ -8,10 +8,10 @@ AMnist_picture_creator::AMnist_picture_creator(QWidget *parent) : QWidget(parent
 
 QVector<double> AMnist_picture_creator::pic_as_features()
 {
-  QVector<double> result(PIC_WIDTH*PIC_HEIGHT);
-  for ( int x = 0; x < PIC_WIDTH; ++x)
+  QVector<double> result;
+  for ( int y = 0; y < PIC_HEIGHT; ++y)
     {
-      for ( int y = 0; y < PIC_HEIGHT; ++y)
+      for ( int x = 0; x < PIC_WIDTH; ++x)
         {
           result.append(double(255 - m_picture[x][y]) / 255.0);
         }
@@ -30,13 +30,35 @@ void AMnist_picture_creator::clear()
     }
 }
 
+void AMnist_picture_creator::reduce(uint x, uint y, uint value)
+{
+  if ((x < PIC_WIDTH) && (y < PIC_HEIGHT))
+    {
+      if (m_picture[x][y] > value)
+        m_picture[x][y] -= value;
+      else
+        m_picture[x][y] = 0;
+    }
+
+}
+
 void AMnist_picture_creator::mouseMoveEvent(QMouseEvent *event)
 {
   if (event->buttons() == Qt::LeftButton)
     {
       double x_koef = width() / PIC_WIDTH;
       double y_koef = height() / PIC_HEIGHT;
-      m_picture[int(event->pos().x()/x_koef)][int(event->pos().y()/y_koef)] = 0;
+      uint x = int(event->pos().x()/x_koef);
+      uint y = int(event->pos().y()/y_koef);
+
+      const uint8_t BIG_REDUCE = 70;
+      const uint8_t SMALL_REDUCE = 20;
+
+      reduce(x,y,BIG_REDUCE);
+      reduce(x-1,y-1,SMALL_REDUCE);
+      reduce(x-1,y+1,SMALL_REDUCE);
+      reduce(x+1,y-1,SMALL_REDUCE);
+      reduce(x+1,y+1,SMALL_REDUCE);
     }
 }
 
